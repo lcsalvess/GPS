@@ -3,11 +3,12 @@ package spring.boot.desafio.gps.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.boot.desafio.gps.model.PontosInteresse;
-import spring.boot.desafio.gps.model.PontosInteresseDTO;
+import spring.boot.desafio.gps.dto.PontosInteresseDTO;
 import spring.boot.desafio.gps.repository.PontosInteresseRepository;
 
 import java.util.List;
 
+//endpoints HTTP
 @RestController
 public class PontosInteresseController {
     private final PontosInteresseRepository repository;

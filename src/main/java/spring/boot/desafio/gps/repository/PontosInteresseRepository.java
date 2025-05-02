@@ -7,6 +7,7 @@ import spring.boot.desafio.gps.model.PontosInteresse;
 
 import java.util.List;
 
+//interface que herda de JpaRepository para operações no banco
 public interface PontosInteresseRepository extends JpaRepository<PontosInteresse, Long> {
 
     @Query(
