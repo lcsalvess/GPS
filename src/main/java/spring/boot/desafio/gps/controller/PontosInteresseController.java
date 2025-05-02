@@ -4,45 +4,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.boot.desafio.gps.model.PontosInteresse;
 import spring.boot.desafio.gps.dto.PontosInteresseDTO;
-import spring.boot.desafio.gps.repository.PontosInteresseRepository;
+import spring.boot.desafio.gps.service.PontosInteresseService;
 
 import java.util.List;
 
 //endpoints HTTP
 @RestController
 public class PontosInteresseController {
-    private final PontosInteresseRepository repository;
+    private final PontosInteresseService service;
 
-    public PontosInteresseController(PontosInteresseRepository repository) {
-        this.repository = repository;
+    public PontosInteresseController(PontosInteresseService service) {
+        this.service = service;
     }
 
     @PostMapping("/pontos-de-interesse")
-    public ResponseEntity<Void> pontosInteresseCriar(@RequestBody PontosInteresseDTO body) {
-        repository.save(new PontosInteresse(body.nome(), body.x(), body.y()));
+    public ResponseEntity<Void> pontosInteresseCriar (@RequestBody PontosInteresseDTO body) {
+        service.salvar(body);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/listar/pontos-de-interesse")
     public ResponseEntity<List<PontosInteresse>> pontosInteresseListar() {
-        List<PontosInteresse> pontosInteresse = repository.findAll();
-        return ResponseEntity.ok(pontosInteresse);
+        return ResponseEntity.ok(service.listarTodos());
     }
 
-    @GetMapping("/listar/pontos-proximos")
-    public ResponseEntity<List<PontosInteresse>> pontosInteresseProximos(@RequestParam("x") Long x, @RequestParam("y") Long y, @RequestParam("dmax") Long dmax) {
-        long xMin = x - dmax;
-        long xMax = x + dmax;
-        long yMin = y - dmax;
-        long yMax = y + dmax;
-        List<PontosInteresse> pontosFiltrados = repository.findPontosInteresseProximos(xMin, xMax, yMin, yMax)
-                .stream()
-                .filter(p -> distanciaEuclidiana(x,y, p.getX(), p.getY()) <= dmax )
-                .toList();
-        return ResponseEntity.ok(pontosFiltrados);
-    }
-
-    private double distanciaEuclidiana(long x1, long y1, long x2, long y2) {
-        return Math.sqrt(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
+    @GetMapping("listar/pontos-proximos")
+    public ResponseEntity<List<PontosInteresse>> pontosProximos(
+            @RequestParam Long x,
+            @RequestParam Long y,
+            @RequestParam Long dmax) {
+        return ResponseEntity.ok(service.listarPontosProximos(x, y, dmax));
     }
 }
