@@ -1,0 +1,47 @@
+package spring.boot.desafio.gps.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import spring.boot.desafio.gps.model.PontosInteresse;
+import spring.boot.desafio.gps.model.PontosInteresseDTO;
+import spring.boot.desafio.gps.repository.PontosInteresseRepository;
+
+import java.util.List;
+
+@RestController
+public class PontosInteresseController {
+    private final PontosInteresseRepository repository;
+
+    public PontosInteresseController(PontosInteresseRepository repository) {
+        this.repository = repository;
+    }
+
+    @PostMapping("/pontos-de-interesse")
+    public ResponseEntity<Void> pontosInteresseCriar(@RequestBody PontosInteresseDTO body) {
+        repository.save(new PontosInteresse(body.nome(), body.x(), body.y()));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/listar/pontos-de-interesse")
+    public ResponseEntity<List<PontosInteresse>> pontosInteresseListar() {
+        List<PontosInteresse> pontosInteresse = repository.findAll();
+        return ResponseEntity.ok(pontosInteresse);
+    }
+
+    @GetMapping("/listar/pontos-proximos")
+    public ResponseEntity<List<PontosInteresse>> pontosInteresseProximos(@RequestParam("x") Long x, @RequestParam("y") Long y, @RequestParam("dmax") Long dmax) {
+        long xMin = x - dmax;
+        long xMax = x + dmax;
+        long yMin = y - dmax;
+        long yMax = y + dmax;
+        List<PontosInteresse> pontosFiltrados = repository.findPonrosInteresseProximos(xMin, xMax, yMin, yMax)
+                .stream()
+                .filter(p -> distanciaEuclidiana(x,y, p.getX(), p.getY()) <= dmax )
+                .toList();
+        return ResponseEntity.ok(pontosFiltrados);
+    }
+
+    private double distanciaEuclidiana(long x1, long y1, long x2, long y2) {
+        return Math.sqrt(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
+    }
+}
