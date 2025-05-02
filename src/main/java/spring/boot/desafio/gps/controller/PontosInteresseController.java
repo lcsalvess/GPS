@@ -34,7 +34,7 @@ public class PontosInteresseController {
         long xMax = x + dmax;
         long yMin = y - dmax;
         long yMax = y + dmax;
-        List<PontosInteresse> pontosFiltrados = repository.findPonrosInteresseProximos(xMin, xMax, yMin, yMax)
+        List<PontosInteresse> pontosFiltrados = repository.findPontosInteresseProximos(xMin, xMax, yMin, yMax)
                 .stream()
                 .filter(p -> distanciaEuclidiana(x,y, p.getX(), p.getY()) <= dmax )
                 .toList();

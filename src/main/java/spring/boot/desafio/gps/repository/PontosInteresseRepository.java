@@ -15,7 +15,7 @@ public interface PontosInteresseRepository extends JpaRepository<PontosInteresse
                     WHERE (p.x >= :xMin AND p.x <= :xMax AND p.y >= :yMin AND p.y <= :yMax)
                     """
     )
-    List<PontosInteresse> findPonrosInteresseProximos
+    List<PontosInteresse> findPontosInteresseProximos
             (@Param("xMin") long xMin,
              @Param("xMax") long xMax,
              @Param("yMin") long yMin,
